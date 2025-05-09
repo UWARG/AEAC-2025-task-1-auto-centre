@@ -4,10 +4,12 @@ import numpy as np
 import pyautogui
 from pymavlink import mavutil
 import math
+import sys
 
 # === CONSTANTS === #
 LOCKED_RADIUS = 40  # max radius to lock
-GUIDE_RADIUS = 90  # max radius to be in guide mode
+GUIDE_RADIUS = 120  # max radius to be in guide mode
+DETECT_SLEEP_TIME = 10
 PX_TO_MS = 0.00002  # pixel-to-velocity scale factor
 
 # === Initialize camera ===
@@ -15,8 +17,8 @@ pyautogui.FAILSAFE = False
 pyautogui.moveTo(0, pyautogui.size()[1])
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration())
-picam2.set_controls({"AeEnable": False, "ExposureTime": 15, "AnalogueGain": 16.0})
 picam2.start()
+picam2.set_controls({"AeEnable": False, "ExposureTime": 25, "AnalogueGain": 16.0})
 
 # === OpenCV fullscreen window ===
 cv2.namedWindow("Camera Preview", cv2.WND_PROP_FULLSCREEN)
@@ -215,12 +217,15 @@ try:
                             mavutil.mavlink.MAV_SEVERITY_INFO, statustext.encode()
                         )
                     if not change_mode(5):
-                        exit(1)
-                    undetect_time = time.time() + 10  # 10 seconds of undetect time
+                        sys.exit(1)
+                    undetect_time = (
+                        time.time() + DETECT_SLEEP_TIME
+                    )  # 10 seconds of undetect time
+                    wait_for_undetect = True
             else:
 
                 if not change_mode(5):
-                    exit(1)
+                    sys.exit(1)
 
             cv2.line(frame, (cx, 0), (cx, frame.shape[0]), color, 2)
             cv2.line(frame, (0, cy), (frame.shape[1], cy), color, 2)
@@ -235,7 +240,7 @@ try:
             offset_text = ""
             ir_error_text = ""
             if not change_mode(5):
-                exit(1)
+                sys.exit(1)
             undetect_time = time.time() + 10  # 10 seconds of undetect time
 
         # Draw overlay text
