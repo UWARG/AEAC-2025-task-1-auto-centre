@@ -223,7 +223,7 @@ try:
                     )  # 10 seconds of undetect time
                     wait_for_undetect = True
             else:
-
+                wait_for_undetect = False
                 if not change_mode(5):
                     sys.exit(1)
 
@@ -241,7 +241,6 @@ try:
             ir_error_text = ""
             if not change_mode(5):
                 sys.exit(1)
-            undetect_time = time.time() + 10  # 10 seconds of undetect time
 
         # Draw overlay text
         cv2.putText(
