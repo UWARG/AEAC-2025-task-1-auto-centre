@@ -231,7 +231,7 @@ try:
             cv2.line(frame, (0, cy), (frame.shape[1], cy), color, 2)
             offset_text = f"{offset_x} px horiz, {-1 * offset_y} px vert"
         elif wait_for_undetect:
-            text = "SLEEPING"
+            text = "TARGET LOCKED, WAITING"
             offset_text = ""
             ir_error_text = ""
             wait_for_undetect = time.time() < undetect_time
